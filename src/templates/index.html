@@ -1,6 +1,16 @@
 
 
   <body>
-    <h1>{{ title }} title page</</h1>
+    <!-- <h3>{{ title }} title page</</h3> -->
+    {% for obj in object_list %}
+    <!-- {% url "detail" id=obj.id %}  -->
+    <a href='{{ obj.get_absolute_url }}'>{{ obj.title }}</a></br>
+    {{ obj.content }}</br>
+    {{ obj.updated }}</br>
+    {{ obj.timestamp }}</br>
+    {{ obj.id }}</br>
+
+    {% endfor %}
+
   </body>
 </html>

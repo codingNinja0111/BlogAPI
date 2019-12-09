@@ -9,7 +9,7 @@ urlpatterns = [
     url(r'^$', posts_list, name='posts_list'),
     url(r'^create/$', posts_create, name='posts_create'),
     # url(r'^list/$', posts_list, name='posts_list'),
-    url(r'^details/$', posts_details, name='posts_detail'),
+    url(r'^(?P<id>\d+)/$', posts_details, name='detail'),
     url(r'^update/$', posts_update, name='posts_update'),
     url(r'^delete/$', posts_delete, name='posts_delete'),
 ]
