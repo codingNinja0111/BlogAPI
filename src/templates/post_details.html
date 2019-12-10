@@ -1,15 +1,10 @@
 
-
-  <body>
-    <h3>{{ title }}</</h3>
-
-    {{ instance.title }}</br>
+{% extends "base.html" %}
+{% block head_title%}{{ instance.title }} | {{ block.super }}{% endblock head_title%}
+{% block content %}
+<div class='col-sm-6 col-sm-offset-3'>
+    <h3>{{ title }}<small>{{ instance.timestamp }}</small></h3>
     {{ instance.content }}</br>
-    {{ instance.updated }}</br>
-    {{ instance.timestamp }}</br>
-    {{ instance.id }}</br>
+</div>
 
-
-
-  </body>
-</html>
+{% endblock content %}
