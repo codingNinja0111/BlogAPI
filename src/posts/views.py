@@ -8,6 +8,8 @@ from .forms import PostForm
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
+from django.utils import timezone
+from django.db.models import Q
 
 
 # Create your views here.
@@ -27,7 +29,11 @@ def posts_create(request):
     return render(request,"post_form.html",context)
 
 def posts_details(request,id=None):
+
     instance = get_object_or_404(Post, id=id)
+    if instance.draft or instance.publish > timezone.now().date():
+        if not request.user.is_staff or not request.user.is_superuser:
+            raise Http404
     share_string = quote_plus(instance.content)
     context = {
     "title":instance.title,
@@ -38,7 +44,20 @@ def posts_details(request,id=None):
     return render(request,"post_details.html",context)
 def posts_list(request):
     # Show 25 contacts per page
-    queryset_list = Post.objects.all().order_by("-timestamp")
+    today = timezone.now()
+    queryset_list = Post.objects.active()#.order_by("-timestamp")
+    if request.user.is_staff or not request.user.is_superuser:
+        queryset_list = Post.objects.all()
+
+    query = request.GET.get("q")
+    if query:
+        queryset_list=queryset_list.filter(
+        Q(title__icontains=query)|
+        Q(content__icontains=query)|
+        Q(user__first_name__icontains=query)|
+        Q(user__last_name__icontains=query)
+        )
+
     paginator = Paginator(queryset_list, 7)
     page = request.GET.get('page')
     try:
@@ -52,7 +71,8 @@ def posts_list(request):
 
     context = {
     "object_list": queryset,
-    "title": "List"
+    "title": "List",
+    "today": today
     }
     return render(request,"post_list.html",context)
 def posts_update(request,id=None):

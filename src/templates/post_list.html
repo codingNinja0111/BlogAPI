@@ -2,6 +2,11 @@
 
 {% block content %}
 <div class="col-sm-6 col-sm-offset-3">
+  <h1>{{ title }}</h1>
+  <form action='' method='GET'>
+    <input type='text' name='q' placeholder='Search Posts' value='{{ request.GET.q }}'/>
+    <input type="Submit" value="Submit"/>
+  </form>
 {% for obj in object_list %}
 <div class="row">
 <div class="col-sm-12">
@@ -10,6 +15,8 @@
       <img src='{{ obj.image.url }}' class="img-responsive" alt="">
       {% endif %}
       <div class="caption">
+
+        {% if obj.draft %}<h3>Draft</h3>{% endif %}{% if obj.publish > today %}<h3>Future Post</h3>{% endif %}
         <h3><a href='{{ obj.get_absolute_url }}'>{{ obj.title }}</a><small>{{ obj.publish }} </small></h3>
         {% if obj.user.get_full_name  %}<p>Author: {{ obj.user.get_full_name }}</p>{% endif %}
         <p>{{ obj.content| linebreaks |truncatechars:120}}</p>
@@ -25,7 +32,7 @@
 <div class="pagination">
     <span class="step-links">
         {% if object_list.has_previous %}
-            <a href="?page={{ object_list.previous_page_number }}">previous</a>
+            <a href="?page={{ object_list.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">previous</a>
         {% endif %}
 
         <span class="current">
@@ -33,7 +40,7 @@
         </span>
 
         {% if object_list.has_next %}
-            <a href="?page={{ object_list.next_page_number }}">next</a>
+            <a href="?page={{ object_list.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">next</a>
         {% endif %}
     </span>
 </div>
